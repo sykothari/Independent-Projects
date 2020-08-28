@@ -1,5 +1,5 @@
-# Query PubMed for list of publications related to inputted keyword(s)
-# List will have the requested number of publications
+# Query PubMed for list of publications related to keyword(s) inputted by user
+# List will have the requested number of publications sorted by relevance
 
 # Output is a bibliography of these publications
 
@@ -251,11 +251,11 @@ def retrieve_info(publist):
 
 
 #bibliography format is authors, title, journal name, volume, issue, pages, publication date, pubmed id, doi
-# iter for <LastName> and <Initials>,
-# <ArticleTitle> for article name,
-# <Journal> has <Title><ISOAbbreviation> (ask which one to use for Journal name, should it be the standard abbreviation or full journal name)
-# <JournalIssue> which has <Volume><Issue><PubDate>,
-# <Pagination> has <MedlinePgn> ,
+# Iterate for <LastName> and <Initials>
+# <ArticleTitle> for article name
+# <Journal> has <Title><ISOAbbreviation> 
+# <JournalIssue> which has <Volume><Issue><PubDate>
+# <Pagination> has <MedlinePgn>
 # <PubDate> is in <JournalIssue> and has <Year><Month>
 # <ELocationID EIdType="doi" has the DOI <ELocationID EIdType="pii" has the PII
 # <AbstractText>
