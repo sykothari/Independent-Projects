@@ -46,12 +46,12 @@ def linebreak(str):
             # no space: print the full length
             # and append \ to show it continues
             retstr += str[i:k] + "\\\n"
-            #print("%s\\" % (str[i:k]))
+            # print("%s\\" % (str[i:k]))
             i = k
         else:
             # print up to but not including the last blank
             retstr += str[i:j] + "\n"
-            #print("%s" % (str[i:j]))
+            # print("%s" % (str[i:j]))
             i = j
     # return the abstract
     return retstr
@@ -72,7 +72,7 @@ def namemonth(mon):
 
 
 
-#function to obtain list of PubMed ID's
+# function to obtain list of PubMed ID's
 
 def pubmed(t,n):
     pubmetadatacontents = {}
@@ -101,7 +101,7 @@ def pubmed(t,n):
 
 
 
-#obtain metadata and parse xml
+# obtain metadata and parse xml
 
 def retrieve_info(publist):
     try:
@@ -117,18 +117,18 @@ def retrieve_info(publist):
     pubcontents = urllib.request.urlopen(pubmetadata)
     pubstring = pubcontents.read()
 
-    #read contents as string using xml parser (xml.etree.ElementTree as ET)
+    # read contents as string using xml parser (xml.etree.ElementTree as ET)
     root = ET.fromstring(pubstring)    
 
-    #obtain text from each node and root
+    # obtain text from each node and root
     pubcount = 1
     for node in root.iter('Article'):
         print(pubcount, end = ". ")
 
-        #start with empty string for citation and keep concatenating it with the information
+        # start with empty string for citation and keep concatenating it with the information
         biblio = ""
 
-        #using counter and conditional statements since an "and" is needed for the last author
+        # using counter and conditional statements since an "and" is needed for the last author
         try:
             count = 0
             for author in node.iter('Author'):
@@ -161,7 +161,7 @@ def retrieve_info(publist):
                         biblio += lastname.strip() + " et al., "
                         break
 
-            #title
+            # title
             for titlenode in node.iter('ArticleTitle'):
                 if titlenode != None:
                     title = titlenode.text
@@ -171,14 +171,14 @@ def retrieve_info(publist):
                     biblio += '"' + title + ',"'
                     break
 
-            #journal name, using ISO Abbreviation because it makes the journal name the standard short form
+            # journal name, using ISO Abbreviation because it makes the journal name the standard short form
             for journal in node.iter('Journal'):
                 if journal.find('ISOAbbreviation') != None:
                     journalname = journal.find('ISOAbbreviation').text
                     biblio += " " + journalname + " "
                     break
 
-            #publication info (Volume, Issue)
+            # publication info (Volume, Issue)
             for pubinfo in node.iter('JournalIssue'):
                 if pubinfo.attrib:
                     if pubinfo.find('Volume'):
@@ -191,14 +191,14 @@ def retrieve_info(publist):
                 else:
                     break
 
-            #page numbers
+            # page numbers
             for pg in node.iter('Pagination'):
                 if pg.find('MedlinePgn'):
                     pagenum = pg.find('MedlinePgn').text
                     biblio += "pp. " + pagenum
                     break
 
-            #publication date
+            # publication date
             for date in node.iter('PubDate'): 
                 biblio += " ("
                 if date:
@@ -211,7 +211,7 @@ def retrieve_info(publist):
                     biblio += "). "
                     break
 
-            #PubMed ID (Couldn't be retrieved from <PMID> or <ArticleId> so listed it from publist)
+            # PubMed ID (Couldn't be retrieved from <PMID> or <ArticleId> so listed it from publist)
             biblio += "PUBMED: " + str(publist[pubcount - 1]) + "; "
             #PII if it exists
             for pid in node.iter('ELocationID'):
@@ -220,7 +220,7 @@ def retrieve_info(publist):
                     biblio += "PII: " + pmid + "; "
                     break
 
-            #DOI if it exists
+            # DOI if it exists
             for eid in node.iter('ELocationID'):
                 if eid.attrib['EIdType'] == "doi":
                     doi = eid.text
@@ -236,21 +236,21 @@ def retrieve_info(publist):
                     else:
                         biblio += "ABSTRACT:\n" + linebreak(abstract_text) + "\n"
                     break
-            #print concatenated string
+            # print concatenated string
             print(biblio)
         except Exception as msg:
             print("Exception: ", msg)
             print("There was a problem with obtaining information from the following PubMed ID: ", str(publist[pubcount - 1]), "\nPlease look this article up manually.\n\n")
             pubcount += 1
             continue
-        #continue to next article, pubcount is a counter for the relevant article (in order of PMID's in publist)
+        # continue to next article, pubcount is a counter for the relevant article (in order of PMID's in publist)
         else:
             pubcount += 1
             continue
     return
 
 
-#bibliography format is authors, title, journal name, volume, issue, pages, publication date, pubmed id, doi
+# Bibliography format is authors, title, journal name, volume, issue, pages, publication date, pubmed id, doi
 # Iterate for <LastName> and <Initials>
 # <ArticleTitle> for article name
 # <Journal> has <Title><ISOAbbreviation> 
@@ -262,14 +262,14 @@ def retrieve_info(publist):
 
 
 try:
-    #ensure valid input for keyword stored in topic and number of publications stored in pubnum
+    # ensure valid input for keyword stored in topic and number of publications stored in pubnum
     topic = str(input("\nEnter the keyword/topic you would like to search: "))
     pubnum = int(input("Enter the number of publications you would like returned: "))
     while pubnum <= 0:
         print("Sorry you typed zero or a negative integer! Try again.")
         pubnum = int(input("Enter the number of publications you would like returned: "))
 
-#account for EOF error separately from other errors, good for debugging purposes
+# account for EOF error separately from other errors, good for debugging purposes
 except EOFError:
     print("\nEnd of file or some other issue. Sorry!")
     exit()
